@@ -1,0 +1,100 @@
+# Данная сборка нужна исключительно для локальной проверки,
+# в продакшн среде подъём приложения будет осуществляться за счёт kubernetes ресурсов и чартов Helm.
+services:
+  db:
+    container_name: db
+    image: postgres:17-alpine
+    volumes:
+      - data_value:/var/lib/postgresql/data/
+    env_file:
+      - .env
+#    ports:
+#      - "5432:5432" # Для локального тестового подключения и дебага.
+    networks:
+      rlg_network:
+        ipv4_address: 172.25.0.3
+
+  service_auth:
+    container_name: service_auth
+    build:
+      context: .
+      dockerfile: auth_service/Dockerfile
+    depends_on:
+      - db
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    networks:
+      rlg_network:
+        ipv4_address: 172.25.0.4
+
+  companies_users_servise:
+    container_name: companies_users_servise
+    build:
+      context: .
+      dockerfile: companies_users_servise/Dockerfile
+    depends_on:
+      - db
+    env_file:
+      - .env
+    ports:
+      - "8001:8000"
+    networks:
+      rlg_network:
+        ipv4_address: 172.25.0.5
+
+  functions_servise:
+    container_name: functions_servise
+    build:
+      context: .
+      dockerfile: functions_servise/Dockerfile
+    depends_on:
+      - db
+    env_file:
+      - .env
+    ports:
+      - "8002:8000"
+    networks:
+      rlg_network:
+        ipv4_address: 172.25.0.6
+
+  groups_roles_servise:
+    container_name: groups_roles_servise
+    build:
+      context: .
+      dockerfile: groups_roles_servise/Dockerfile
+    depends_on:
+      - db
+    env_file:
+      - .env
+    ports:
+      - "8003:8000"
+    networks:
+      rlg_network:
+        ipv4_address: 172.25.0.7
+
+  settings_servise:
+    container_name: settings_servise
+    build:
+      context: .
+      dockerfile: settings_servise/Dockerfile
+    depends_on:
+      - db
+    env_file:
+      - .env
+    ports:
+      - "8004:8000"
+    networks:
+      rlg_network:
+        ipv4_address: 172.25.0.8
+
+networks:
+  rlg_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.25.0.0/16
+
+volumes:
+  data_value:
