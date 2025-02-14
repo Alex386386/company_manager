@@ -44,6 +44,7 @@ async def get_setting_dicts(
 @router.post(
     "/create",
     response_model=SettingDictDB,
+    status_code=status.HTTP_201_CREATED,
 )
 async def create_setting_dict(
     setting_dict_data: SettingDictCreate,

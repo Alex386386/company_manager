@@ -10,7 +10,7 @@ from groups.crud import role_crud
 from groups.schemas import GroupDB
 
 
-async def get_role_by_id(
+async def get_group_by_id(
     group_id: Annotated[int, Path],
     session: AsyncSession = Depends(get_async_session),
 ) -> GroupDB:

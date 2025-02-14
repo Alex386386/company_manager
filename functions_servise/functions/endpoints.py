@@ -44,6 +44,7 @@ async def get_functions(
 @router.post(
     "/create",
     response_model=FunctionDB,
+    status_code=status.HTTP_201_CREATED,
 )
 async def create_function(
     function_data: FunctionCreate,

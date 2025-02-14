@@ -1,12 +1,23 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, status
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from common_models.logger import logger, request_log
-from routers import main_router
+from companies_users_initial_data import load_initial_data
+from companies_users_routers import main_router
 
 
-app = FastAPI(title="Settings Servise")
+@asynccontextmanager
+async def load_data_lifespan(app: FastAPI):
+    logger.debug("Подготовка начальных данных.")
+    await load_initial_data()
+    logger.debug("Приложение запущено.")
+    yield
+
+
+app = FastAPI(title="Companies Users Servise", lifespan=load_data_lifespan)
 
 origins = ["*"]
 app.add_middleware(BaseHTTPMiddleware, dispatch=request_log)

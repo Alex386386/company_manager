@@ -6,7 +6,7 @@ from common_models.db import get_async_session
 from common_models.jwt_dependency import get_credentials
 from common_models.utils import log_and_raise_error
 from groups.crud import role_crud
-from groups.dependencies import get_role_by_id
+from groups.dependencies import get_group_by_id
 from groups.schemas import GroupCreate, GroupUpdate, GroupDB
 
 router = APIRouter(
@@ -17,10 +17,10 @@ router = APIRouter(
 
 
 @router.get(
-    "/get/{company_id}",
+    "/get/{group_id}",
     response_model=GroupDB,
 )
-async def get_group(group: GroupDB = Depends(get_role_by_id)):
+async def get_group(group: GroupDB = Depends(get_group_by_id)):
     return group
 
 
@@ -44,6 +44,7 @@ async def get_groups(
 @router.post(
     "/create",
     response_model=GroupDB,
+    status_code=status.HTTP_201_CREATED,
 )
 async def create_group(
     group_data: GroupCreate,
@@ -53,20 +54,20 @@ async def create_group(
 
 
 @router.patch(
-    "/update/{company_id}",
+    "/update/{group_id}",
     response_model=GroupDB,
 )
 async def update_group(
     group_data: GroupUpdate,
-    group: GroupDB = Depends(get_role_by_id),
+    group: GroupDB = Depends(get_group_by_id),
     session: AsyncSession = Depends(get_async_session),
 ) -> GroupDB:
     return await role_crud.update(db_obj=group, obj_in=group_data, session=session)
 
 
-@router.delete("/delete/{company_id}")
+@router.delete("/delete/{group_id}")
 async def delete_group(
-    group: GroupDB = Depends(get_role_by_id),
+    group: GroupDB = Depends(get_group_by_id),
     session: AsyncSession = Depends(get_async_session),
 ) -> dict:
     try:

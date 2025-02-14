@@ -44,6 +44,7 @@ async def get_all_timezone_dicts(
 @router.post(
     "/create",
     response_model=TimezoneDictDB,
+    status_code=status.HTTP_201_CREATED,
 )
 async def create_timezone_dict(
     timezone_dict_data: TimezoneDictCreate,

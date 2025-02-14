@@ -3,10 +3,9 @@ from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from common_models.logger import logger, request_log
-from routers import main_router
+from setting_routers import main_router
 
-
-app = FastAPI(title="Functions Servise")
+app = FastAPI(title="Settings Servise")
 
 origins = ["*"]
 app.add_middleware(BaseHTTPMiddleware, dispatch=request_log)

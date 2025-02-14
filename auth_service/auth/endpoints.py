@@ -57,7 +57,7 @@ async def refresh_access_token(
 ) -> dict:
     try:
         payload = jwt.decode(
-            token, settings.secret_key, algorithms=[settings.algorithm]
+            token, settings.refresh_secret_key, algorithms=[settings.algorithm]
         )
         username: str = payload.get("sub")
         if username is None:

@@ -44,6 +44,7 @@ async def get_companies(
 @router.post(
     "/create",
     response_model=CompanyDB,
+    status_code=status.HTTP_201_CREATED,
 )
 async def create_company(
     company_data: CompanyCreate,

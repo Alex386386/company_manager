@@ -4,7 +4,7 @@ import time
 
 from fastapi import Request
 
-logger = logging.getLogger("Bet_maker_logger")
+logger = logging.getLogger("logger")
 
 log_formatter = logging.Formatter(
     fmt="%(asctime)s [%(levelname)s] %(name)s: %(message)s"

@@ -45,6 +45,7 @@ async def get_all_users(
 @router.post(
     "/create",
     response_model=UserDB,
+    status_code=status.HTTP_201_CREATED,
 )
 async def create_user(
     user_data: UserCreate,

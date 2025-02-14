@@ -48,6 +48,7 @@ async def get_property_code_dicts(
 @router.post(
     "/create",
     response_model=PropertyCodeDictDB,
+    status_code=status.HTTP_201_CREATED,
 )
 async def create_property_code_dict(
     property_code_dict_data: PropertyCodeDictCreate,

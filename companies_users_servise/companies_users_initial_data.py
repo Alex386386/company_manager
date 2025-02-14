@@ -33,10 +33,7 @@ async def load_initial_data() -> None:
         logger.debug("Компания добавлена в сессию.")
         await session.flush()
 
-        group = UserGroup(
-            company_id=company.id,
-            group_name="test"
-        )
+        group = UserGroup(company_id=company.id, group_name="test")
         session.add(group)
         await session.flush()
         logger.debug("Группа добавлена в сессию.")

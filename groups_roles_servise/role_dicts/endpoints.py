@@ -44,6 +44,7 @@ async def get_role_dicts(
 @router.post(
     "/create",
     response_model=RoleDictDB,
+    status_code=status.HTTP_201_CREATED,
 )
 async def create_role_dict(
     role_dict_data: RoleDictCreate,

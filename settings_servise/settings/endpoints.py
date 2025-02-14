@@ -44,6 +44,7 @@ async def get_settings(
 @router.post(
     "/create",
     response_model=SettingDB,
+    status_code=status.HTTP_201_CREATED,
 )
 async def create_setting(
     setting_data: SettingCreate,
