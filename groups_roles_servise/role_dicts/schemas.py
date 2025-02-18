@@ -1,9 +1,11 @@
 from pydantic import BaseModel, ConfigDict
 
+from common_models.fields_validation import validate_str_30, validate_str_60
+
 
 class RoleDictBase(BaseModel):
-    code: str
-    name: str
+    code: validate_str_30
+    name: validate_str_60
 
 
 class RoleDictCreate(RoleDictBase):
@@ -11,8 +13,8 @@ class RoleDictCreate(RoleDictBase):
 
 
 class RoleDictUpdate(RoleDictBase):
-    code: str | None = None
-    name: str | None = None
+    code: validate_str_30 | None = None
+    name: validate_str_60 | None = None
 
 
 class RoleDictDB(RoleDictBase):

@@ -4,7 +4,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from common_models.db import get_async_session
 from common_models.jwt_dependency import get_credentials
-from common_models.utils import log_and_raise_error
 from groups.crud import role_crud
 from groups.dependencies import get_group_by_id
 from groups.schemas import GroupCreate, GroupUpdate, GroupDB
@@ -31,14 +30,7 @@ async def get_group(group: GroupDB = Depends(get_group_by_id)):
 async def get_groups(
     session: AsyncSession = Depends(get_async_session),
 ) -> list[GroupDB]:
-    try:
-        return await role_crud.get_multi(session=session)
-    except Exception as e:
-        log_and_raise_error(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            message_error=f"{e}",
-            message_log=f"{e}",
-        )
+    return await role_crud.get_multi(session=session)
 
 
 @router.post(
@@ -70,12 +62,4 @@ async def delete_group(
     group: GroupDB = Depends(get_group_by_id),
     session: AsyncSession = Depends(get_async_session),
 ) -> dict:
-    try:
-        await role_crud.remove(db_obj=group, session=session)
-        return {"status": "Объект успешно удалён из БД"}
-    except Exception as e:
-        log_and_raise_error(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            message_error={"status": f"Ошибка при удалении: {e}"},
-            message_log=f"{e}",
-        )
+    return await role_crud.remove(db_obj=group, session=session)

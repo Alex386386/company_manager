@@ -38,10 +38,17 @@ class SettingCRUD(CRUDBase):
         return db_obj.scalars().first()
 
     async def get_multi(self, session: AsyncSession):
-        db_objs = await session.execute(
-            select(self.model).options(load_only(*self.load_fields))
-        )
-        return db_objs.scalars().all()
+        try:
+            db_objs = await session.execute(
+                select(self.model).options(load_only(*self.load_fields))
+            )
+            return db_objs.scalars().all()
+        except Exception as e:
+            log_and_raise_error(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                message_error=f"{e}",
+                message_log=f"{e}",
+            )
 
     async def get_with_models(
         self,

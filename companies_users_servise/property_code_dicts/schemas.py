@@ -1,10 +1,12 @@
 from pydantic import BaseModel, ConfigDict
 
+from common_models.fields_validation import validate_str_30, validate_str_100
+
 
 class PropertyCodeDictBase(BaseModel):
-    group_code: str
-    code: str
-    name: str | None = None
+    group_code: validate_str_30
+    code: validate_str_30
+    name: validate_str_100 | None = None
 
 
 class PropertyCodeDictCreate(PropertyCodeDictBase):
@@ -12,8 +14,8 @@ class PropertyCodeDictCreate(PropertyCodeDictBase):
 
 
 class PropertyCodeDictUpdate(PropertyCodeDictBase):
-    group_code: str | None = None
-    code: str | None = None
+    group_code: validate_str_30 | None = None
+    code: validate_str_30 | None = None
 
 
 class PropertyCodeDictDB(PropertyCodeDictBase):

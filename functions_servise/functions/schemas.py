@@ -1,9 +1,11 @@
 from pydantic import BaseModel, ConfigDict
 
+from common_models.fields_validation import validate_str_30, validate_small_int
+
 
 class FunctionBase(BaseModel):
-    code: str
-    version: int
+    code: validate_str_30
+    version: validate_small_int
 
 
 class FunctionCreate(FunctionBase):
@@ -11,8 +13,8 @@ class FunctionCreate(FunctionBase):
 
 
 class FunctionUpdate(FunctionBase):
-    code: str | None = None
-    version: int | None = None
+    code: validate_str_30 | None = None
+    version: validate_small_int | None = None
 
 
 class FunctionDB(FunctionBase):

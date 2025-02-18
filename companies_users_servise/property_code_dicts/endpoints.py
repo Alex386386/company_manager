@@ -4,7 +4,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from common_models.db import get_async_session
 from common_models.jwt_dependency import get_credentials
-from common_models.utils import log_and_raise_error
 from property_code_dicts.crud import property_code_dict_crud
 from property_code_dicts.dependencies import get_property_code_dict_by_id
 from property_code_dicts.schemas import (
@@ -35,14 +34,7 @@ async def get_property_code_dict(property_code_dict: PropertyCodeDictDB = Depend
 async def get_property_code_dicts(
     session: AsyncSession = Depends(get_async_session),
 ) -> list[PropertyCodeDictDB]:
-    try:
-        return await property_code_dict_crud.get_multi(session=session)
-    except Exception as e:
-        log_and_raise_error(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            message_error=f"{e}",
-            message_log=f"{e}",
-        )
+    return await property_code_dict_crud.get_multi(session=session)
 
 
 @router.post(
@@ -74,12 +66,4 @@ async def delete_property_code_dict(
     property_code_dict: PropertyCodeDictDB = Depends(get_property_code_dict_by_id),
     session: AsyncSession = Depends(get_async_session),
 ) -> dict:
-    try:
-        await property_code_dict_crud.remove(db_obj=property_code_dict, session=session)
-        return {"status": "Объект успешно удалён из БД"}
-    except Exception as e:
-        log_and_raise_error(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            message_error={"status": f"Ошибка при удалении: {e}"},
-            message_log=f"{e}",
-        )
+    return await property_code_dict_crud.remove(db_obj=property_code_dict, session=session)

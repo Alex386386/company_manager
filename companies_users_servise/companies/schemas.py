@@ -2,15 +2,16 @@ from datetime import date
 
 from pydantic import BaseModel, ConfigDict
 
+from common_models.fields_validation import validate_str_9, validate_str_13, validate_str_16, validate_str_255
 from property_code_dicts.schemas import PropertyCodeDictDB
 
 
 class CompanyBase(BaseModel):
-    name: str
-    inn: str
-    kpp: str
-    ogrn: str | None = None
-    bic: str | None = None
+    name: validate_str_255
+    inn: validate_str_16
+    kpp: validate_str_9
+    ogrn: validate_str_13 | None = None
+    bic: validate_str_9 | None = None
 
 
 class CompanyCreate(CompanyBase):
@@ -18,9 +19,9 @@ class CompanyCreate(CompanyBase):
 
 
 class CompanyUpdate(CompanyBase):
-    name: str | None = None
-    inn: str | None = None
-    kpp: str | None = None
+    name: validate_str_255 | None = None
+    inn: validate_str_16 | None = None
+    kpp: validate_str_9 | None = None
 
 
 class CompanyDB(CompanyBase):

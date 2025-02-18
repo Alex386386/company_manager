@@ -1,10 +1,9 @@
-from fastapi import APIRouter, status, HTTPException
+from fastapi import APIRouter, status
 from fastapi.params import Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from common_models.db import get_async_session
 from common_models.jwt_dependency import get_credentials
-from common_models.utils import log_and_raise_error
 from functions.crud import function_crud
 from functions.dependencies import get_function_by_id, get_function_by_id_with_models
 from functions.schemas import FunctionCreate, FunctionUpdate, FunctionDB, RoleFunctionBase, FunctionWithRolesDB
@@ -31,14 +30,7 @@ async def get_function(function: FunctionWithRolesDB = Depends(get_function_by_i
 async def get_functions(
     session: AsyncSession = Depends(get_async_session),
 ) -> list[FunctionDB]:
-    try:
-        return await function_crud.get_multi(session=session)
-    except Exception as e:
-        log_and_raise_error(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            message_error=f"{e}",
-            message_log=f"{e}",
-        )
+    return await function_crud.get_multi(session=session)
 
 
 @router.post(
@@ -84,14 +76,11 @@ async def delete_function_role_connection(
     role_id: int = Query(...),
     session: AsyncSession = Depends(get_async_session),
 ):
-    result = await function_crud.remove_role_from_function(
+    return await function_crud.remove_role_from_function(
         function_code_id=function_code_id,
         role_id=role_id,
         session=session
     )
-    if not result:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Данного объекта нет в БД")
-    return {"status": "Объект успешно удалён из БД"}
 
 
 @router.delete("/delete/{function_id}")
@@ -99,12 +88,4 @@ async def delete_function(
     function: FunctionDB = Depends(get_function_by_id),
     session: AsyncSession = Depends(get_async_session),
 ) -> dict:
-    try:
-        await function_crud.remove(db_obj=function, session=session)
-        return {"status": "Объект успешно удалён из БД"}
-    except Exception as e:
-        log_and_raise_error(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            message_error={"status": f"Ошибка при удалении: {e}"},
-            message_log=f"{e}",
-        )
+    return await function_crud.remove(db_obj=function, session=session)

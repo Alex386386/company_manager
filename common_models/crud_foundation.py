@@ -21,8 +21,14 @@ class CRUDBase:
         return db_obj.scalars().first()
 
     async def get_multi(self, session: AsyncSession):
-        db_objs = await session.execute(select(self.model))
-        return db_objs.scalars().all()
+        try:
+            db_objs = await session.execute(select(self.model))
+            return db_objs.scalars().all()
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"{e}",
+            )
 
     async def handle_integrity_error(self, e: IntegrityError):
         """Обрабатывает ошибки IntegrityError при работе с базой данных."""
@@ -70,6 +76,12 @@ class CRUDBase:
         db_obj,
         session: AsyncSession,
     ):
-        await session.delete(db_obj)
-        await session.commit()
-        return db_obj
+        try:
+            await session.delete(db_obj)
+            await session.commit()
+            return {"status": "Объект успешно удалён из БД"}
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={"status": f"Ошибка при удалении: {e}"},
+            )

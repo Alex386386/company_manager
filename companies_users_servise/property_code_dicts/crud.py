@@ -1,9 +1,11 @@
+from fastapi import status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import load_only
 
 from common_models.crud_foundation import CRUDBase
 from common_models.models import PropertyCodeDict
+from common_models.utils import log_and_raise_error
 
 
 class PropertyCodeDictCRUD(CRUDBase):
@@ -29,11 +31,18 @@ class PropertyCodeDictCRUD(CRUDBase):
         return db_obj.scalars().first()
 
     async def get_multi(self, session: AsyncSession):
-        db_objs = await session.execute(
-            select(self.model)
-            .options(load_only(*self.load_fields))
-        )
-        return db_objs.scalars().all()
+        try:
+            db_objs = await session.execute(
+                select(self.model)
+                .options(load_only(*self.load_fields))
+            )
+            return db_objs.scalars().all()
+        except Exception as e:
+            log_and_raise_error(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                message_error=f"{e}",
+                message_log=f"{e}",
+            )
 
 
 property_code_dict_crud = PropertyCodeDictCRUD(PropertyCodeDict)

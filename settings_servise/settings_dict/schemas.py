@@ -1,9 +1,11 @@
 from pydantic import BaseModel, ConfigDict
 
+from common_models.fields_validation import validate_str_30, validate_str_255
+
 
 class SettingDictBase(BaseModel):
-    code: str
-    name: str
+    code: validate_str_30
+    name: validate_str_255
 
 
 class SettingDictCreate(SettingDictBase):
@@ -11,8 +13,8 @@ class SettingDictCreate(SettingDictBase):
 
 
 class SettingDictUpdate(SettingDictBase):
-    code: str | None = None
-    name: str | None = None
+    code: validate_str_30 | None = None
+    name: validate_str_255 | None = None
 
 
 class SettingDictDB(SettingDictBase):

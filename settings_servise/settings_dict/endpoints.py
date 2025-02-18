@@ -4,7 +4,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from common_models.db import get_async_session
 from common_models.jwt_dependency import get_credentials
-from common_models.utils import log_and_raise_error
 from settings_dict.crud import setting_dict_crud
 from settings_dict.dependencies import get_setting_dict_by_id
 from settings_dict.schemas import SettingDictCreate, SettingDictUpdate, SettingDictDB
@@ -31,14 +30,7 @@ async def get_setting_dict(setting_dict: SettingDictDB = Depends(get_setting_dic
 async def get_setting_dicts(
     session: AsyncSession = Depends(get_async_session),
 ) -> list[SettingDictDB]:
-    try:
-        return await setting_dict_crud.get_multi(session=session)
-    except Exception as e:
-        log_and_raise_error(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            message_error=f"{e}",
-            message_log=f"{e}",
-        )
+    return await setting_dict_crud.get_multi(session=session)
 
 
 @router.post(
@@ -70,12 +62,4 @@ async def delete_setting_dict(
     setting_dict: SettingDictDB = Depends(get_setting_dict_by_id),
     session: AsyncSession = Depends(get_async_session),
 ) -> dict:
-    try:
-        await setting_dict_crud.remove(db_obj=setting_dict, session=session)
-        return {"status": "Объект успешно удалён из БД"}
-    except Exception as e:
-        log_and_raise_error(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            message_error={"status": f"Ошибка при удалении: {e}"},
-            message_log=f"{e}",
-        )
+    return await setting_dict_crud.remove(db_obj=setting_dict, session=session)

@@ -2,20 +2,22 @@ from datetime import date
 
 from pydantic import BaseModel, ConfigDict
 
+from common_models.fields_validation import validate_str_60, validate_str_255, validate_str_1000
+
 
 class UserBase(BaseModel):
     company_id: int
     group_id: int
     timezone_id: int
-    username: str
-    firstname: str
-    lastname: str
-    patronymic: str | None = None
-    comment: str | None = None
+    username: validate_str_60
+    firstname: validate_str_60
+    lastname: validate_str_60
+    patronymic: validate_str_60 | None = None
+    comment: validate_str_1000 | None = None
 
 
 class UserCreate(UserBase):
-    password: str
+    password: validate_str_255
 
 
 class UserUpdate(UserBase):
@@ -24,9 +26,9 @@ class UserUpdate(UserBase):
     company_id: int | None = None
     group_id: int | None = None
     timezone_id: int | None = None
-    username: str | None = None
-    firstname: str | None = None
-    lastname: str | None = None
+    username: validate_str_60 | None = None
+    firstname: validate_str_60 | None = None
+    lastname: validate_str_60 | None = None
 
 
 class UserDB(UserBase):

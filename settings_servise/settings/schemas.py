@@ -2,12 +2,13 @@ from datetime import date
 
 from pydantic import BaseModel, ConfigDict
 
+from common_models.fields_validation import validate_str_255
 from settings_dict.schemas import SettingDictDB
 
 
 class SettingBase(BaseModel):
     setting_code_id: int
-    value: str
+    value: validate_str_255
     active_from: date
     active_to: date | None = None
 
@@ -18,7 +19,7 @@ class SettingCreate(SettingBase):
 
 class SettingUpdate(SettingBase):
     setting_code_id: int | None = None
-    value: str | None = None
+    value: validate_str_255 | None = None
     active_from: date | None = None
 
 

@@ -4,7 +4,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from common_models.db import get_async_session
 from common_models.jwt_dependency import get_credentials
-from common_models.utils import log_and_raise_error
 from settings.crud import setting_crud
 from settings.dependencies import get_setting_by_id, get_setting_by_id_with_models
 from settings.schemas import SettingCreate, SettingUpdate, SettingDB, SettingWithModelsDB
@@ -31,14 +30,7 @@ async def get_setting(setting: SettingWithModelsDB = Depends(get_setting_by_id_w
 async def get_settings(
     session: AsyncSession = Depends(get_async_session),
 ) -> list[SettingDB]:
-    try:
-        return await setting_crud.get_multi(session=session)
-    except Exception as e:
-        log_and_raise_error(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            message_error=f"{e}",
-            message_log=f"{e}",
-        )
+    return await setting_crud.get_multi(session=session)
 
 
 @router.post(
@@ -70,12 +62,4 @@ async def delete_setting(
     setting: SettingDB = Depends(get_setting_by_id),
     session: AsyncSession = Depends(get_async_session),
 ) -> dict:
-    try:
-        await setting_crud.remove(db_obj=setting, session=session)
-        return {"status": "Объект успешно удалён из БД"}
-    except Exception as e:
-        log_and_raise_error(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            message_error={"status": f"Ошибка при удалении: {e}"},
-            message_log=f"{e}",
-        )
+    return await setting_crud.remove(db_obj=setting, session=session)

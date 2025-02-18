@@ -1,4 +1,4 @@
-from fastapi import status
+from fastapi import status, HTTPException
 from sqlalchemy import and_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -33,10 +33,17 @@ class FunctionCRUD(CRUDBase):
         return db_obj.scalars().first()
 
     async def get_multi(self, session: AsyncSession):
-        db_objs = await session.execute(
-            select(self.model).options(load_only(*self.load_fields))
-        )
-        return db_objs.scalars().all()
+        try:
+            db_objs = await session.execute(
+                select(self.model).options(load_only(*self.load_fields))
+            )
+            return db_objs.scalars().all()
+        except Exception as e:
+            log_and_raise_error(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                message_error=f"{e}",
+                message_log=f"{e}",
+            )
 
     async def get_with_models(
         self,
@@ -108,9 +115,8 @@ class FunctionCRUD(CRUDBase):
         if obj:
             await session.delete(obj)
             await session.commit()
-            return True
+            return {"status": "Объект успешно удалён из БД"}
 
-        return False
-
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Данного объекта нет в БД")
 
 function_crud = FunctionCRUD(FunctionDict)

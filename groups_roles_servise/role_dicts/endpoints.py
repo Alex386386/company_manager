@@ -4,7 +4,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from common_models.db import get_async_session
 from common_models.jwt_dependency import get_credentials
-from common_models.utils import log_and_raise_error
 from role_dicts.crud import role_dict_crud
 from role_dicts.dependencies import get_role_dict_by_id
 from role_dicts.schemas import RoleDictCreate, RoleDictUpdate, RoleDictDB
@@ -31,14 +30,7 @@ async def get_role_dict(role_dict: RoleDictDB = Depends(get_role_dict_by_id)):
 async def get_role_dicts(
     session: AsyncSession = Depends(get_async_session),
 ) -> list[RoleDictDB]:
-    try:
-        return await role_dict_crud.get_multi(session=session)
-    except Exception as e:
-        log_and_raise_error(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            message_error=f"{e}",
-            message_log=f"{e}",
-        )
+    return await role_dict_crud.get_multi(session=session)
 
 
 @router.post(
@@ -70,12 +62,4 @@ async def delete_role_dict(
     role_dict: RoleDictDB = Depends(get_role_dict_by_id),
     session: AsyncSession = Depends(get_async_session),
 ) -> dict:
-    try:
-        await role_dict_crud.remove(db_obj=role_dict, session=session)
-        return {"status": "Объект успешно удалён из БД"}
-    except Exception as e:
-        log_and_raise_error(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            message_error={"status": f"Ошибка при удалении: {e}"},
-            message_log=f"{e}",
-        )
+    return await role_dict_crud.remove(db_obj=role_dict, session=session)
